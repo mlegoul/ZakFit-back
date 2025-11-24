@@ -10,3 +10,8 @@ db.sqlite
 .env.*
 !.env.example
 default.profraw
+
+# Fichiers de configuration IDE/éditeur
+.idea/
+.vscode/
+*.swp
