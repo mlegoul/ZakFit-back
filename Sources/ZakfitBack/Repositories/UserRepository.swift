@@ -12,6 +12,8 @@ protocol UserRepositoryProtocol: Sendable {
     func create(user: User, on db: any Database) async throws -> User
     
     func exists(byEmail email: String, on db: any Database) async throws -> Bool
+    
+    func getUser(byId userId: UUID, on db: any Database) async throws -> User?
 }
 
 struct UserRepository: UserRepositoryProtocol {
@@ -24,5 +26,9 @@ struct UserRepository: UserRepositoryProtocol {
         try await User.query(on: db)
             .filter(\User.$email == email)
             .first() != nil
+    }
+    
+    func getUser(byId userId: UUID, on db: any Database) async throws -> User? {
+        try await User.find(userId, on: db)
     }
 }

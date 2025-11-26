@@ -10,24 +10,39 @@ import Vapor
 // MARK: - Responses
 struct UserPublic: Content {
     let id: UUID?
-    let name: String
+    let firstName: String
+    let lastName: String
     let email: String
+}
+
+struct UserHealthDTO: Content {
     let height: Int?
     let weight: Int?
-    let goals: String?
+    let dietaryPreferences: String?
+    let activityLevel: String?
     let age: Int?
+    let sex: String?
 }
+
 
 extension User {
     func makePublic() -> UserPublic {
         return UserPublic(
             id: id,
-            name: name,
-            email: email,
+            firstName: firstName,
+            lastName: lastName,
+            email: email
+        )
+    }
+    
+    func makeHealthDTO() -> UserHealthDTO {
+        return UserHealthDTO(
             height: height,
             weight: weight,
-            goals: goals,
-            age: age
+            dietaryPreferences: goals,
+            activityLevel: nil,
+            age: age,
+            sex: nil
         )
     }
 }

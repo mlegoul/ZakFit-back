@@ -9,7 +9,8 @@ import Vapor
 
 // MARK: - Requests
 struct RegisterRequest: Content {
-    let name: String
+    let firstName: String
+    let lastName: String
     let email: String
     let password: String
 }

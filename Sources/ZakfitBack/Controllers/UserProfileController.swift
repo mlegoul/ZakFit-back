@@ -1,0 +1,42 @@
+//
+//  UserProfileController.swift
+//  ZakfitBack
+//
+//  Created by Mehdi Legoullon on 26/11/2025.
+//
+
+import Vapor
+import Fluent
+
+struct UserProfileController: RouteCollection {
+    
+    let userProfileService: UserProfileService
+    
+    init(userProfileService: UserProfileService = UserProfileService()) {
+        self.userProfileService = userProfileService
+    }
+    
+    func boot(routes: any RoutesBuilder) throws {
+        let usersRoute = routes.grouped("users")
+        let protectedRoutes = usersRoute.grouped(AuthMiddleware())
+        
+        protectedRoutes.get("profile", "info", use: getUserInfo)
+        protectedRoutes.get("profile", "health", use: getUserHealth)
+    }
+    
+    func getUserInfo(req: Request) async throws -> UserPublic {
+        let userId = try req.auth.require(User.self).id!
+        guard let userProfile = try await userProfileService.getUserInfo(userId: userId, on: req.db) else {
+            throw Abort(.notFound, reason: "User not found")
+        }
+        return userProfile
+    }
+    
+    func getUserHealth(req: Request) async throws -> UserHealthDTO {
+        let userId = try req.auth.require(User.self).id!
+        guard let userHealth = try await userProfileService.getUserHealth(userId: userId, on: req.db) else {
+            throw Abort(.notFound, reason: "User not found")
+        }
+        return userHealth
+    }
+}

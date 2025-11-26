@@ -45,7 +45,8 @@ struct AuthController: RouteCollection {
         )
         
         let user = User(
-            name: registerRequest.name,
+            firstName: registerRequest.firstName,
+            lastName: registerRequest.lastName,
             email: registerRequest.email,
             passwordHash: passwordHash
         )

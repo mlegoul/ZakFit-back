@@ -13,8 +13,12 @@ final class User: Model, @unchecked Sendable, Authenticatable {
     
     @ID(custom: "user_id")
     var id: UUID?
-    @Field(key: "name")
-    var name: String
+    
+    @Field(key: "first_name")
+    var firstName: String
+    
+    @Field(key: "last_name")
+    var lastName: String
     
     @Field(key: "email")
     var email: String
@@ -38,7 +42,8 @@ final class User: Model, @unchecked Sendable, Authenticatable {
     
     init(
         id: UUID? = nil,
-        name: String,
+        firstName: String,
+        lastName: String,
         email: String,
         passwordHash: String,
         height: Int? = nil,
@@ -47,7 +52,8 @@ final class User: Model, @unchecked Sendable, Authenticatable {
         age: Int? = nil
     ) {
         self.id = id
-        self.name = name
+        self.firstName = firstName
+        self.lastName = lastName
         self.email = email
         self.passwordHash = passwordHash
         self.height = height
