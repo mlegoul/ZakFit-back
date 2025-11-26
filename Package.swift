@@ -7,6 +7,8 @@ let package = Package(
        .macOS(.v13)
     ],
     dependencies: [
+        // JWT
+        .package(url: "http://github.com/vapor/jwt.git", from: "4.0.0"),
         // 💧 A server-side Swift web framework.
         .package(url: "https://github.com/vapor/vapor.git", from: "4.115.0"),
         // 🗄 An ORM for SQL and NoSQL databases.
@@ -20,6 +22,7 @@ let package = Package(
         .executableTarget(
             name: "ZakfitBack",
             dependencies: [
+                .product(name: "JWT", package: "jwt" ),
                 .product(name: "Fluent", package: "fluent"),
                 .product(name: "FluentMySQLDriver", package: "fluent-mysql-driver"),
                 .product(name: "Vapor", package: "vapor"),
