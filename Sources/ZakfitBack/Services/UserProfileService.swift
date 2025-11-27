@@ -121,4 +121,12 @@ struct UserProfileService {
         try await user.update(on: db)
         return user
     }
+    
+    func deleteUser(userId: UUID, on db: any Database) async throws {
+        guard let user = try await User.find(userId, on: db) else {
+            throw Abort(.notFound, reason: "User not found")
+        }
+        
+        try await user.delete(on: db)
+    }
 }

@@ -27,6 +27,8 @@ struct UserProfileController: RouteCollection {
         protectedRoutes.patch("profile", "goals", use: updateUserGoals)
         protectedRoutes.patch("profile", "info", use: updateUserInfo)
         protectedRoutes.patch("profile", "health", use: updateUserHealth)
+        
+        protectedRoutes.delete("profile", use: deleteUser)
     }
     
     func getUserInfo(req: Request) async throws -> UserPublic {
@@ -91,4 +93,13 @@ struct UserProfileController: RouteCollection {
         
         return updatedHealth.makeHealthDTO()
     }
+    
+    func deleteUser(req: Request) async throws -> HTTPStatus {
+        let userId = try req.auth.require(User.self).id!
+        
+        try await userProfileService.deleteUser(userId: userId, on: req.db)
+        
+        return .noContent
+    }
+
 }
