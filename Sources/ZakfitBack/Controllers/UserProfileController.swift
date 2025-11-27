@@ -22,6 +22,7 @@ struct UserProfileController: RouteCollection {
         
         protectedRoutes.get("profile", "info", use: getUserInfo)
         protectedRoutes.get("profile", "health", use: getUserHealth)
+        protectedRoutes.get("profile", "goals", use: getUserGoals)
     }
     
     func getUserInfo(req: Request) async throws -> UserPublic {
@@ -38,5 +39,13 @@ struct UserProfileController: RouteCollection {
             throw Abort(.notFound, reason: "User not found")
         }
         return userHealth
+    }
+    
+    func getUserGoals(req: Request) async throws -> UserGoalsDTO {
+        let userId = try req.auth.require(User.self).id!
+        guard let userGoals = try await userProfileService.getUserGoals(userId: userId, on: req.db) else {
+            throw Abort(.notFound, reason: "Goals not found")
+        }
+        return userGoals
     }
 }

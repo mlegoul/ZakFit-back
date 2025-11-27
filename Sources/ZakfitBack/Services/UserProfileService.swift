@@ -28,4 +28,17 @@ struct UserProfileService {
         }
         return user.makeHealthDTO()
     }
+    
+    func getUserGoals(userId: UUID, on db: any Database) async throws -> UserGoalsDTO? {
+        guard let user = try await User.find(userId, on: db) else {
+            return nil
+        }
+        
+        guard let goalsJSON = user.goals,
+              let goalsData = goalsJSON.data(using: .utf8),
+              let goalsDTO = try? JSONDecoder().decode(UserGoalsDTO.self, from: goalsData) else {
+            return nil
+        }
+        return goalsDTO
+    }
 }

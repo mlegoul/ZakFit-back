@@ -46,3 +46,15 @@ extension User {
         )
     }
 }
+
+struct UserGoalsDTO: Content {
+    var targetCalories: Int?
+    var targetDuration: Int?
+    var frequency: String?
+    
+    init(targetCalories: Int? = nil, targetDuration: Int? = nil, frequency: String? = nil) {
+        self.targetCalories = targetCalories
+        self.targetDuration = targetDuration
+        self.frequency = frequency
+    }
+}
