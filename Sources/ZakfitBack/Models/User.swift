@@ -38,6 +38,15 @@ final class User: Model, @unchecked Sendable, Authenticatable {
     @Field(key: "age")
     var age: Int?
     
+    @Field(key: "dietary_preferences")
+    var dietaryPreferences: String?
+    
+    @Field(key: "activity_level")
+    var activityLevel: String?
+    
+    @Field(key: "sex")
+    var sex: String?
+    
     init() { }
     
     init(
@@ -49,7 +58,10 @@ final class User: Model, @unchecked Sendable, Authenticatable {
         height: Int? = nil,
         weight: Int? = nil,
         goals: String? = nil,
-        age: Int? = nil
+        age: Int? = nil,
+        dietaryPreferences: String? = nil,
+        activityLevel: String? = nil,
+        sex: String? = nil
     ) {
         self.id = id
         self.firstName = firstName
@@ -60,5 +72,8 @@ final class User: Model, @unchecked Sendable, Authenticatable {
         self.weight = weight
         self.goals = goals
         self.age = age
+        self.dietaryPreferences = dietaryPreferences
+        self.activityLevel = activityLevel
+        self.sex = sex
     }
 }

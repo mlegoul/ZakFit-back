@@ -49,7 +49,10 @@ struct UserProfileService {
         
         let currentGoals = try await getUserGoals(userId: userId, on: db) ?? UserGoalsDTO()
         
-        let mergedGoals = mergeGoals(currentGoals: currentGoals, newGoals: goals)
+        let mergedGoals = mergeGoals(
+            currentGoals: currentGoals,
+            newGoals: goals
+        )
         
         let goalsJSON = try encodeGoalsToJSON(mergedGoals)
         user.goals = goalsJSON
@@ -70,5 +73,52 @@ struct UserProfileService {
     private func encodeGoalsToJSON(_ goals: UserGoalsDTO) throws -> String? {
         let goalsData = try JSONEncoder().encode(goals)
         return String(data: goalsData, encoding: .utf8)
+    }
+    
+    func updateUserInfo(userId: UUID, info: UserPublicUpdateDTO, on db: any Database) async throws -> User {
+        guard let user = try await User.find(userId, on: db) else {
+            throw Abort(.notFound, reason: "User not found")
+        }
+        
+        if let firstName = info.firstName {
+            user.firstName = firstName
+        }
+        if let lastName = info.lastName {
+            user.lastName = lastName
+        }
+        if let email = info.email {
+            user.email = email
+        }
+        
+        try await user.update(on: db)
+        return user
+    }
+    
+    func updateUserHealth(userId: UUID, health: UserHealthUpdateDTO, on db: any Database) async throws -> User {
+        guard let user = try await User.find(userId, on: db) else {
+            throw Abort(.notFound, reason: "User not found")
+        }
+        
+        if let height = health.height {
+            user.height = height
+        }
+        if let weight = health.weight {
+            user.weight = weight
+        }
+        if let dietaryPreferences = health.dietaryPreferences {
+            user.dietaryPreferences = dietaryPreferences
+        }
+        if let activityLevel = health.activityLevel {
+            user.activityLevel = activityLevel
+        }
+        if let age = health.age {
+            user.age = age
+        }
+        if let sex = health.sex {
+            user.sex = sex
+        }
+        
+        try await user.update(on: db)
+        return user
     }
 }

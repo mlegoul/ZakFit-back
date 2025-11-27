@@ -39,10 +39,10 @@ extension User {
         return UserHealthDTO(
             height: height,
             weight: weight,
-            dietaryPreferences: goals,
-            activityLevel: nil,
+            dietaryPreferences: dietaryPreferences,
+            activityLevel: activityLevel,
             age: age,
-            sex: nil
+            sex: sex
         )
     }
 }
@@ -57,4 +57,19 @@ struct UserGoalsDTO: Content {
         self.targetDuration = targetDuration
         self.frequency = frequency
     }
+}
+
+struct UserPublicUpdateDTO: Content {
+    var firstName: String?
+    var lastName: String?
+    var email: String?
+}
+
+struct UserHealthUpdateDTO: Content {
+    var height: Int?
+    var weight: Int?
+    var dietaryPreferences: String?
+    var activityLevel: String?
+    var age: Int?
+    var sex: String?
 }
