@@ -41,4 +41,34 @@ struct UserProfileService {
         }
         return goalsDTO
     }
+    
+    func updateUserGoals(userId: UUID, goals: UserGoalsDTO, on db: any Database) async throws -> UserGoalsDTO {
+        guard let user = try await User.find(userId, on: db) else {
+            throw Abort(.notFound, reason: "User not found")
+        }
+        
+        let currentGoals = try await getUserGoals(userId: userId, on: db) ?? UserGoalsDTO()
+        
+        let mergedGoals = mergeGoals(currentGoals: currentGoals, newGoals: goals)
+        
+        let goalsJSON = try encodeGoalsToJSON(mergedGoals)
+        user.goals = goalsJSON
+        
+        try await user.update(on: db)
+        
+        return mergedGoals
+    }
+    
+    private func mergeGoals(currentGoals: UserGoalsDTO, newGoals: UserGoalsDTO) -> UserGoalsDTO {
+        return UserGoalsDTO(
+            targetCalories: newGoals.targetCalories ?? currentGoals.targetCalories,
+            targetDuration: newGoals.targetDuration ?? currentGoals.targetDuration,
+            frequency: newGoals.frequency ?? currentGoals.frequency
+        )
+    }
+    
+    private func encodeGoalsToJSON(_ goals: UserGoalsDTO) throws -> String? {
+        let goalsData = try JSONEncoder().encode(goals)
+        return String(data: goalsData, encoding: .utf8)
+    }
 }
