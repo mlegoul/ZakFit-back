@@ -47,6 +47,9 @@ final class User: Model, @unchecked Sendable, Authenticatable {
     @Field(key: "sex")
     var sex: String?
     
+    @Children(for: \.$user)
+    var activities: [Activity]
+    
     init() { }
     
     init(

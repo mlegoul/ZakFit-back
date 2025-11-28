@@ -29,6 +29,9 @@ final class Activity: Model, Content, @unchecked Sendable {
     @Timestamp(key: "date", on: .create)
     var date: Date?
     
+    @Parent(key: "user_id")
+    var user: User
+    
     init() { }
     
     init(

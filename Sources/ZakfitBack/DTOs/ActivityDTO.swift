@@ -14,3 +14,10 @@ struct CreateActivityDTO: Content {
     let calories: Int
     let date: Date?
 }
+
+struct ActivityResponseDTO: Content {
+    let type: String
+    let duration: Int
+    let calories: Int
+    let date: Date
+}

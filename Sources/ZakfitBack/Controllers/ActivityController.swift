@@ -19,11 +19,25 @@ struct ActivityController: RouteCollection {
         let protectedRoutes = activitiesRoute.grouped(AuthMiddleware())
         
         protectedRoutes.post(use: createActivity)
+        protectedRoutes.get(use: getAllActivities)
     }
     
     func createActivity(req: Request) async throws -> Activity {
         let userId = try req.auth.require(User.self).id!
         let activityData = try req.content.decode(CreateActivityDTO.self)
         return try await activityService.createActivity(userId: userId, activityData: activityData, on: req.db)
+    }
+    
+    func getAllActivities(req: Request) async throws -> [ActivityResponseDTO] {
+        let userId = try req.auth.require(User.self).id!
+        let activities = try await activityService.getAllActivities(userId: userId, on: req.db)
+        return activities.map { activity in
+            ActivityResponseDTO(
+                type: activity.type,
+                duration: activity.duration,
+                calories: activity.calories,
+                date: activity.date ?? Date()
+            )
+        }
     }
 }
