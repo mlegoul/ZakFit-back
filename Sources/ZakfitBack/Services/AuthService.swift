@@ -21,7 +21,6 @@ struct AuthService {
     }
     
     func authenticate(email: String, password: String, on req: Request) async throws -> User {
-        // Récupérer l'utilisateur par email
         guard let user = try await User.query(on: req.db)
             .filter(\User.$email == email)
             .first() else {

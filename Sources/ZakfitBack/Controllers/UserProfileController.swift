@@ -6,7 +6,6 @@
 //
 
 import Vapor
-import Fluent
 
 struct UserProfileController: RouteCollection {
     
@@ -101,5 +100,4 @@ struct UserProfileController: RouteCollection {
         
         return .noContent
     }
-
 }
