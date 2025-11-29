@@ -6,9 +6,7 @@ func routes(_ app: Application) throws {
         "It works!"
     }
 
-    app.get("hello") { req async -> String in
-        "Hello, world!"
-    }
-
-    try app.register(collection: TodoController())
+    try app.register(collection: AuthController())
+    try app.register(collection: UserProfileController())
+    try app.register(collection: ActivityController())
 }
