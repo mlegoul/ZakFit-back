@@ -11,7 +11,9 @@ import Fluent
 struct ActivityService {
     let activityRepository: any ActivityRepositoryProtocol
     
-    init(activityRepository: any ActivityRepositoryProtocol = ActivityRepository()) {
+    init(
+        activityRepository: any ActivityRepositoryProtocol = ActivityRepository()
+    ) {
         self.activityRepository = activityRepository
     }
     
@@ -27,7 +29,14 @@ struct ActivityService {
         return try await activityRepository.create(activity: activity, on: db)
     }
     
-    func getAllActivities(userId: UUID, on db: any Database, type: String?) async throws -> [Activity] {
-        return try await activityRepository.getAllActivities(userId: userId, on: db, type: type)
+    func getAllActivities(userId: UUID, on db: any Database, type: String?, startDate: String?, endDate: String?) async throws -> [Activity] {
+        return try await activityRepository
+            .getAllActivities(
+                userId: userId,
+                on: db,
+                type: type,
+                startDate: startDate,
+                endDate: endDate
+            )
     }
 }
