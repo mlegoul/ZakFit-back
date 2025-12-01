@@ -23,10 +23,11 @@ struct ActivityService {
             calories: activityData.calories,
             date: activityData.date ?? Date()
         )
+
         return try await activityRepository.create(activity: activity, on: db)
     }
     
-    func getAllActivities(userId: UUID, on db: any Database) async throws -> [Activity] {
-        return try await activityRepository.getAllActivities(userId: userId, on: db)
+    func getAllActivities(userId: UUID, on db: any Database, type: String?) async throws -> [Activity] {
+        return try await activityRepository.getAllActivities(userId: userId, on: db, type: type)
     }
 }

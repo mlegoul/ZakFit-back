@@ -14,8 +14,8 @@ final class Activity: Model, Content, @unchecked Sendable {
     @ID(key: .id)
     var id: UUID?
     
-    @Field(key: "user_id")
-    var userId: UUID
+    @Parent(key: "user_id")
+    var user: User
     
     @Field(key: "type")
     var type: String
@@ -29,9 +29,6 @@ final class Activity: Model, Content, @unchecked Sendable {
     @Timestamp(key: "date", on: .create)
     var date: Date?
     
-    @Parent(key: "user_id")
-    var user: User
-    
     init() { }
     
     init(
@@ -43,7 +40,7 @@ final class Activity: Model, Content, @unchecked Sendable {
         date: Date? = nil
     ) {
         self.id = id
-        self.userId = userId
+        self.$user.id = userId
         self.type = type
         self.duration = duration
         self.calories = calories

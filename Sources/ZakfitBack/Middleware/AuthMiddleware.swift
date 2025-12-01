@@ -32,13 +32,11 @@ struct AuthMiddleware: AsyncMiddleware {
             return try await next.respond(to: request)
             
         } catch let error as JWTError {
-
             throw Abort(
                 .unauthorized,
                 reason: "Invalid token: \(error.localizedDescription)"
             )
         } catch {
-            
             throw Abort(.unauthorized, reason: "Authentication failed")
         }
     }
