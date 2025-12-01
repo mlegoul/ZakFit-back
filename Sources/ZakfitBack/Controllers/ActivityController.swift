@@ -35,16 +35,12 @@ struct ActivityController: RouteCollection {
 
     func getAllActivities(req: Request) async throws -> [ActivityResponseDTO] {
         let userId = try req.auth.require(User.self).id!
-        let typeFilter: String? = req.query["type"]
-        let startDateFilter: String? = req.query["startDate"]
-        let endDateFilter: String? = req.query["endDate"]
+        let filterDTO = try req.query.decode(ActivityFilterDTO.self)
         
         let activities = try await activityService.getAllActivities(
             userId: userId,
             on: req.db,
-            type: typeFilter,
-            startDate: startDateFilter,
-            endDate: endDateFilter
+            filter: filterDTO
         )
         
         return activities.map { activity in

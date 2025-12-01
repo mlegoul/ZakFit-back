@@ -11,7 +11,7 @@ import Fluent
 protocol ActivityRepositoryProtocol: Sendable {
     func create(activity: Activity, on db: any Database) async throws -> Activity
     
-    func getAllActivities(userId: UUID, on db: any Database, type: String?, startDate: String?, endDate: String?) async throws -> [Activity]
+    func getAllActivities(userId: UUID, on db: any Database, filter: ActivityFilterDTO) async throws -> [Activity]
 }
 
 struct ActivityRepository: ActivityRepositoryProtocol {
@@ -21,16 +21,15 @@ struct ActivityRepository: ActivityRepositoryProtocol {
         return activity
     }
     
-    
-    func getAllActivities(userId: UUID, on db: any Database, type: String?, startDate: String?, endDate: String?) async throws -> [Activity] {
+    func getAllActivities(userId: UUID, on db: any Database, filter: ActivityFilterDTO) async throws -> [Activity] {
         var query = Activity.query(on: db)
         query = query.filter(\.$user.$id == userId)
         
-        if let type = type {
+        if let type = filter.type {
             query = query.filter(\.$type == type)
         }
         
-        if let startDate = startDate, let endDate = endDate {
+        if let startDate = filter.startDate, let endDate = filter.endDate {
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd"
             guard let start = dateFormatter.date(from: startDate),
@@ -46,6 +45,10 @@ struct ActivityRepository: ActivityRepositoryProtocol {
             query = query
                 .filter(\.$date >= startOfDay)
                 .filter(\.$date < endOfDay)
+        }
+        
+        if let minDuration = filter.minDuration {
+            query = query.filter(\.$duration >= minDuration)
         }
         
         return try await query.all()

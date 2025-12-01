@@ -21,3 +21,10 @@ struct ActivityResponseDTO: Content {
     let calories: Int
     let date: Date
 }
+
+struct ActivityFilterDTO: Content {
+    let type: String?
+    let startDate: String?
+    let endDate: String?
+    let minDuration: Int?
+}

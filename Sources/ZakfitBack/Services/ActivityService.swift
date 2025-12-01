@@ -29,14 +29,11 @@ struct ActivityService {
         return try await activityRepository.create(activity: activity, on: db)
     }
     
-    func getAllActivities(userId: UUID, on db: any Database, type: String?, startDate: String?, endDate: String?) async throws -> [Activity] {
-        return try await activityRepository
-            .getAllActivities(
-                userId: userId,
-                on: db,
-                type: type,
-                startDate: startDate,
-                endDate: endDate
-            )
+    func getAllActivities(userId: UUID, on db: any Database, filter: ActivityFilterDTO) async throws -> [Activity] {
+        return try await activityRepository.getAllActivities(
+            userId: userId,
+            on: db,
+            filter: filter
+        )
     }
 }
