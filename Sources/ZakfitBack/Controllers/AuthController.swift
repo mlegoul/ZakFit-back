@@ -30,10 +30,15 @@ struct AuthController: RouteCollection {
     // MARK: - Register
     func register(req: Request) async throws -> RegisterResponse {
         
-        let registerRequest = try req.content.decode(RegisterRequest.self)
+        let dto = try req.content.decode(UserRegisterDTO.self)
+        try UserRegisterDTO.validate(content: req)
+        
+        guard dto.password == dto.passwordConfirmation else {
+            throw Abort(.badRequest, reason: "Les mots de passe ne correspondent pas.")
+        }
         
         guard try await !userRepository
-            .exists(byEmail: registerRequest.email, on: req.db) else {
+            .exists(byEmail: dto.email, on: req.db) else {
             throw Abort(
                 .conflict,
                 reason: "Un utilisateur avec cet email existe déjà."
@@ -41,13 +46,13 @@ struct AuthController: RouteCollection {
         }
         
         let passwordHash = try await req.password.async.hash(
-            registerRequest.password
+            dto.password
         )
         
         let user = User(
-            firstName: registerRequest.firstName,
-            lastName: registerRequest.lastName,
-            email: registerRequest.email,
+            firstName: dto.firstName,
+            lastName: dto.lastName,
+            email: dto.email,
             passwordHash: passwordHash
         )
         
@@ -65,6 +70,8 @@ struct AuthController: RouteCollection {
     func login(req: Request) async throws -> TokenResponse {
         
         let loginRequest = try req.content.decode(LoginRequest.self)
+        
+        try UserLoginDTO.validate(content: req)
         
         guard let user = try await User.query(on: req.db)
             .filter(\User.$email == loginRequest.email)
