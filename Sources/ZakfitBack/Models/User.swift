@@ -50,6 +50,9 @@ final class User: Model, @unchecked Sendable, Authenticatable {
     @Children(for: \.$user)
     var activities: [Activity]
     
+    @Children(for: \.$user)
+    var meals: [Meal]
+    
     init() { }
     
     init(
