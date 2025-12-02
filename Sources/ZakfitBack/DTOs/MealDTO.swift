@@ -15,7 +15,6 @@ struct CreateMealRequest: Content {
     let date: Date?
 }
 
-
 struct CreateMealFoodItemRequest: Content {
     let name: String
     let consumedQuantity: Int
@@ -27,6 +26,24 @@ struct MealResponse: Content {
     let type: String
     let calories: Int
     let date: Date?
+}
+
+struct MealHistoryResponse: Content {
+    let id: UUID
+    let type: String
+    let calories: Int
+    let date: Date?
+    let foodItems: [MealFoodItemResponse]
+}
+
+struct MealFoodItemResponse: Content {
+    let id: UUID
+    let name: String
+    let consumedQuantity: Int
+    let calories: Double
+    let proteins: Double
+    let carbs: Double
+    let fats: Double
 }
 
 // MARK: - Open Food Facts API

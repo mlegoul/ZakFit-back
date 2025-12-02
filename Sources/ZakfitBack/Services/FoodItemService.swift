@@ -95,4 +95,8 @@ struct FoodItemService {
             fats: fats
         )
     }
+    
+    func getMealHistory(userId: UUID, on db: any Database) async throws -> [MealHistoryResponse] {
+        return try await foodItemRepository.getMealHistory(userId: userId, on: db)
+    }
 }

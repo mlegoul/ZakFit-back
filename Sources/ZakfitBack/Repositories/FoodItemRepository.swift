@@ -10,7 +10,9 @@ import Vapor
 
 protocol FoodItemRepositoryProtocol: Sendable {
     func createFoodItem(_ foodItem: FoodItem, on db: any Database) async throws
+    
     func getFoodItemByName(_ name: String, on db: any Database) async throws -> FoodItem?
+    
     func createMeal(
         userId: UUID,
         type: String,
@@ -18,9 +20,12 @@ protocol FoodItemRepositoryProtocol: Sendable {
         date: Date,
         on db: any Database
     ) async throws -> MealResponse
+    
+    func getMealHistory(userId: UUID,on db: any Database) async throws -> [MealHistoryResponse]
 }
 
 struct FoodItemRepository: FoodItemRepositoryProtocol {
+    
     func createFoodItem(_ foodItem: FoodItem, on db: any Database) async throws {
         try await foodItem.save(on: db)
     }
@@ -136,5 +141,50 @@ struct FoodItemRepository: FoodItemRepositoryProtocol {
                 date: meal.date
             )
         }
+    }
+    
+    func getMealHistory(
+        userId: UUID,
+        on db: any Database
+    ) async throws -> [MealHistoryResponse] {
+        let meals = try await Meal.query(on: db)
+            .filter(\.$user.$id == userId)
+            .all()
+        
+        var mealHistoryResponses = [MealHistoryResponse]()
+        
+        for meal in meals {
+            let mealFoodItems = try await MealFoodItem.query(on: db)
+                .filter(\.$meal.$id == meal.id!)
+                .all()
+            
+            var foodItemResponses = [MealFoodItemResponse]()
+            
+            for mealFoodItem in mealFoodItems {
+                guard let foodItem = try await FoodItem.find(mealFoodItem.$foodItem.id, on: db) else {
+                    continue
+                }
+                
+                foodItemResponses.append(MealFoodItemResponse(
+                    id: try foodItem.requireID(),
+                    name: foodItem.name,
+                    consumedQuantity: mealFoodItem.consumedQuantity,
+                    calories: foodItem.calories * Double(mealFoodItem.consumedQuantity) / 100.0,
+                    proteins: foodItem.proteins * Double(mealFoodItem.consumedQuantity) / 100.0,
+                    carbs: foodItem.carbs * Double(mealFoodItem.consumedQuantity) / 100.0,
+                    fats: foodItem.fats * Double(mealFoodItem.consumedQuantity) / 100.0
+                ))
+            }
+            
+            mealHistoryResponses.append(MealHistoryResponse(
+                id: try meal.requireID(),
+                type: meal.type,
+                calories: meal.calories,
+                date: meal.date,
+                foodItems: foodItemResponses
+            ))
+        }
+        
+        return mealHistoryResponses
     }
 }

@@ -18,7 +18,9 @@ struct MealController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
         let mealsRoute = routes.grouped("meals")
         let protectedRoutes = mealsRoute.grouped(AuthMiddleware())
+
         protectedRoutes.post(use: createMeal)
+        protectedRoutes.get("history", use: getMealHistory)
     }
     
     func createMeal(req: Request) async throws -> MealResponse {
@@ -34,5 +36,10 @@ struct MealController: RouteCollection {
         )
         
         return mealResponse
+    }
+    
+    func getMealHistory(req: Request) async throws -> [MealHistoryResponse] {
+        let user = try req.auth.require(User.self)
+        return try await foodItemService.getMealHistory(userId: user.id!, on: req.db)
     }
 }
